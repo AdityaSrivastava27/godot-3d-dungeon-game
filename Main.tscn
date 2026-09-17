@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://c04mccss52wqy"]
+
+[ext_resource type="Script" uid="uid://ctx551w8kh256" path="res://player.gd" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://bl8ey8rgmbcmb" path="res://camera.gd" id="2_uu6xs"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1s3pe"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_qyrim"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1s3pe"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uu6xs"]
+albedo_color = Color(0.46666667, 0.8980392, 0.4509804, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1s3pe"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r0du0"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1s3pe"]
+
+[node name="Main" type="Node3D" unique_id=492320031]
+
+[node name="Environment" type="StaticBody3D" parent="." unique_id=898692464]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment" unique_id=356311112]
+transform = Transform3D(30, 0, 0, 0, 1, 0, 0, 0, 30, -0.013854146, -5.9604645e-08, 0.006430149)
+shape = SubResource("BoxShape3D_1s3pe")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment" unique_id=2036068057]
+transform = Transform3D(30, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0)
+mesh = SubResource("BoxMesh_qyrim")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=901511171]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1958434241]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+script = ExtResource("1_glv2v")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1516126795]
+shape = SubResource("CapsuleShape3D_1s3pe")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player" unique_id=1154789214]
+material_override = SubResource("StandardMaterial3D_uu6xs")
+mesh = SubResource("CapsuleMesh_1s3pe")
+
+[node name="CameraPivot" type="Node3D" parent="Player" unique_id=1715645530]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+top_level = true
+script = ExtResource("2_uu6xs")
+
+[node name="Camera3D" type="Camera3D" parent="Player/CameraPivot" unique_id=191349579]
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 1.5, 4)
+current = true
+
+[node name="FrontMarker" type="MeshInstance3D" parent="Player" unique_id=586352614]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.75, 0.3)
+material_override = SubResource("StandardMaterial3D_r0du0")
+mesh = SubResource("BoxMesh_1s3pe")
