@@ -37,7 +37,7 @@ func _process(delta: float) -> void:
 			if _hud == null:
 				_hud = get_tree().get_first_node_in_group("hud")
 			if _hud and _hud.has_method("notify_locked"):
-				_hud.notify_locked()
+				_hud.notify_locked(required_key)
 
 	var target := _closed_y + deg_to_rad(open_angle) if want_open else _closed_y
 	rotation.y = lerp_angle(rotation.y, target, speed * delta)

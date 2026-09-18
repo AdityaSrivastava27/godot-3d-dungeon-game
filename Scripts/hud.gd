@@ -2,13 +2,28 @@ extends CanvasLayer
 
 ## Reads the player's health, key ring and the live enemy count each frame and
 ## updates the on-screen bar/labels. show_death() flashes the death overlay on
-## respawn; notify_locked() briefly shows a "locked door" hint.
+## respawn; notify_locked(key) briefly shows which key a locked door needs.
 
 var _lock_timer := 0.0
+var _lock_key := ""
 
 
-func notify_locked() -> void:
-	_lock_timer = 0.25
+func notify_locked(key_name := "") -> void:
+	_lock_timer = 0.4
+	_lock_key = key_name
+
+
+# Turn a key id like "room1_key" into a readable label like "Room1 Key".
+func _pretty(id: String) -> String:
+	if id == "":
+		return ""
+	var words := id.replace("_", " ").split(" ")
+	var out := ""
+	for w in words:
+		if w == "":
+			continue
+		out += w.substr(0, 1).to_upper() + w.substr(1) + " "
+	return out.strip_edges()
 
 
 func _process(delta: float) -> void:
@@ -35,14 +50,20 @@ func _process(delta: float) -> void:
 		enemy_label.text = ("Enemies left: %d" % n) if n > 0 else "Dungeon cleared!"
 
 	if key_label != null:
-		var ids: Array = []
+		var pretty: Array = []
 		if p != null and p.has_method("get_key_ids"):
-			ids = p.get_key_ids()
-		key_label.text = "Keys: %s" % (", ".join(ids) if ids.size() > 0 else "none")
+			for id in p.get_key_ids():
+				pretty.append(_pretty(id))
+		key_label.text = "Keys: %s" % (", ".join(pretty) if pretty.size() > 0 else "none")
 
 	if lock_label != null:
 		_lock_timer = maxf(0.0, _lock_timer - delta)
 		lock_label.visible = _lock_timer > 0.0
+		if _lock_timer > 0.0:
+			if _lock_key != "":
+				lock_label.text = "Locked — you need the %s (defeat the guardian holding it)" % _pretty(_lock_key)
+			else:
+				lock_label.text = "Locked — a key is required"
 
 
 func show_death() -> void:
