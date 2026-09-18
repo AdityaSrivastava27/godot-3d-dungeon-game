@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Enemy.tscn" id="5_enemy"]
 [ext_resource type="Script" path="res://Scripts/hud.gd" id="6_hud"]
 [ext_resource type="PackedScene" path="res://Scenes/Item.tscn" id="7_item"]
+[ext_resource type="PackedScene" path="res://Scenes/Key.tscn" id="8_key"]
 
 [sub_resource type="Environment" id="env_castle"]
 background_mode = 1
@@ -613,6 +614,8 @@ omni_attenuation = 1.5
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 12)
 script = ExtResource("1_glv2v")
 collision_layer = 2
+item_pickup_scene = ExtResource("7_item")
+key_pickup_scene = ExtResource("8_key")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=12491522]
 shape = SubResource("shape_player_cap")

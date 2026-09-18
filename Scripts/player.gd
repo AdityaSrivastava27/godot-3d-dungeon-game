@@ -30,6 +30,10 @@ var _target: Node3D = null      # enemy currently locked for the next swing
 var _inventory: Array = []
 var _sel := 0
 
+# Pickup scenes used when the player drops an item back into the dungeon.
+@export var item_pickup_scene: PackedScene
+@export var key_pickup_scene: PackedScene
+
 
 func _ready() -> void:
 	_spawn_transform = global_transform
@@ -144,7 +148,39 @@ func _use_selected() -> void:
 func _drop_selected() -> void:
 	if _sel < 0 or _sel >= _inventory.size():
 		return
+	_spawn_pickup(_inventory[_sel])
 	_consume(_sel)
+
+
+# Put a dropped item back into the dungeon as a pickup in front of the player, so
+# it can be collected again. Keys keep their id, so a re-collected key still opens
+# the correct door.
+func _spawn_pickup(it: Dictionary) -> void:
+	var is_key := String(it.get("type", "")) == "key"
+	var scene: PackedScene = key_pickup_scene if is_key else item_pickup_scene
+	if scene == null:
+		return
+	var pickup := scene.instantiate()
+	get_tree().current_scene.add_child(pickup)
+	var forward := Vector3(sin(rotation.y), 0.0, cos(rotation.y))
+	var drop_pos := global_position + forward * 1.6
+	if is_key:
+		drop_pos.y = 1.0
+		if "key_id" in pickup:
+			pickup.key_id = String(it.get("id", ""))
+	else:
+		drop_pos.y = 0.4
+		if "item_id" in pickup:
+			pickup.item_id = String(it.get("id", ""))
+		if "item_name" in pickup:
+			pickup.item_name = String(it.get("name", ""))
+		if "item_type" in pickup:
+			pickup.item_type = String(it.get("type", "misc"))
+		if "heal_amount" in pickup:
+			pickup.heal_amount = int(it.get("heal", 0))
+		if "amount" in pickup:
+			pickup.amount = 1
+	pickup.global_position = drop_pos
 
 
 # --------------------------------------------------------------------- Keys ---
