@@ -635,54 +635,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.1, 0.4)
 material_override = SubResource("mat_sword")
 mesh = SubResource("mesh_sword")
 
-[node name="Enemy_R1_a" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.1, 6)
-
-[node name="Enemy_R1_b" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.1, 5)
-
-[node name="Enemy_R1_c" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 7)
-
-[node name="Enemy_R2_a" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.1, -15)
-
-[node name="Enemy_R2_b" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.1, -15)
-
-[node name="Enemy_R2_c" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -22)
-
-[node name="Enemy_R4_a" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.1, -14)
-
-[node name="Enemy_R4_b" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0.1, -18)
-
-[node name="Enemy_R4_c" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.1, -21)
-
-[node name="Enemy_R3_a" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.1, -44)
-max_health = 70
-melee_damage = 14
-throw_cooldown = 1.8
-move_speed = 3.4
-
-[node name="Enemy_R3_b" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.1, -44)
-max_health = 70
-melee_damage = 14
-throw_cooldown = 1.8
-move_speed = 3.4
-
-[node name="Enemy_R3_c" parent="." instance=ExtResource("5_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -47)
-max_health = 70
-melee_damage = 14
-throw_cooldown = 1.8
-move_speed = 3.4
-
 [node name="HUD" type="CanvasLayer" parent="." groups=["hud"]]
 script = ExtResource("6_hud")
 
@@ -745,3 +697,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text = "YOU DIED
 Respawning at the entrance..."
+
+[node name="Enemy_MainHall" parent="." instance=ExtResource("5_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -18)
+
+[node name="Enemy_Armory" parent="." instance=ExtResource("5_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 0.1, -17)
+
+[node name="Enemy_Throne" parent="." instance=ExtResource("5_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -45)
+max_health = 70
+melee_damage = 14
+throw_cooldown = 1.8
+move_speed = 3.4

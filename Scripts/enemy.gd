@@ -54,6 +54,22 @@ func die() -> void:
 	queue_free()
 
 
+# True only when nothing solid (physics layer 1) sits between the enemy's throwing
+# point and the player. Used so enemies don't lob fireballs into walls.
+func _has_line_of_sight() -> bool:
+	if _player == null:
+		return false
+	var from := global_position + Vector3(0, 1.3, 0)
+	var to := _player.global_position + Vector3(0, 1.0, 0)
+	var space := get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collision_mask = 1          # world/environment only
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	var hit := space.intersect_ray(query)
+	return hit.is_empty()             # empty -> clear line to the player
+
+
 func _throw() -> void:
 	if projectile_scene == null or _player == null:
 		return
@@ -115,7 +131,8 @@ func _physics_process(delta: float) -> void:
 				if _player.has_method("take_damage"):
 					_player.take_damage(melee_damage)
 				_melee_cd = melee_cooldown
-			if dist <= throw_range and dist >= throw_min_range and _throw_cd <= 0.0:
+			# Only throw when in range AND with a clear line of sight to the player.
+			if dist <= throw_range and dist >= throw_min_range and _throw_cd <= 0.0 and _has_line_of_sight():
 				_throw()
 				_throw_cd = throw_cooldown
 		else:
