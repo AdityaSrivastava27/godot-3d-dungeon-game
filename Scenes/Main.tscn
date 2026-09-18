@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://djo272vdkdncr" path="res://Scripts/door.gd" id="4_door"]
 [ext_resource type="PackedScene" path="res://Scenes/Enemy.tscn" id="5_enemy"]
 [ext_resource type="Script" path="res://Scripts/hud.gd" id="6_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/Item.tscn" id="7_item"]
 
 [sub_resource type="Environment" id="env_castle"]
 background_mode = 1
@@ -703,6 +704,15 @@ offset_bottom = 30.0
 horizontal_alignment = 1
 text = "Locked — defeat the guardian to find its key"
 
+[node name="InventoryLabel" type="Label" parent="HUD/Root"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -40.0
+offset_right = 900.0
+offset_bottom = -14.0
+text = "Items:  empty"
+
 [node name="DeathPanel" type="ColorRect" parent="HUD/Root"]
 visible = false
 anchor_right = 1.0
@@ -736,3 +746,15 @@ max_health = 70
 melee_damage = 14
 throw_cooldown = 1.8
 move_speed = 3.4
+
+[node name="Potion_Entrance" parent="." instance=ExtResource("7_item")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.4, 8)
+
+[node name="Potion_Hall" parent="." instance=ExtResource("7_item")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.4, -20)
+
+[node name="Potion_Armory" parent="." instance=ExtResource("7_item")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0.4, -13)
+
+[node name="Potion_Throne" parent="." instance=ExtResource("7_item")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.4, -42)

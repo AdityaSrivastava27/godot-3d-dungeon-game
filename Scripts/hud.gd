@@ -65,6 +65,26 @@ func _process(delta: float) -> void:
 			else:
 				lock_label.text = "Locked — a key is required"
 
+	var inv_label := get_node_or_null("Root/InventoryLabel") as Label
+	if inv_label != null:
+		var inv: Array = []
+		var sel := 0
+		if p != null and p.has_method("get_inventory"):
+			inv = p.get_inventory()
+		if p != null and p.has_method("get_selected_index"):
+			sel = p.get_selected_index()
+		var parts: Array = []
+		for i in range(inv.size()):
+			var it: Dictionary = inv[i]
+			var label := "%d %s" % [i + 1, str(it.get("name", it.get("id", "?")))]
+			if int(it.get("count", 1)) > 1:
+				label += " x%d" % int(it["count"])
+			if i == sel:
+				label = "[" + label + "]"
+			parts.append(label)
+		var listing := "   ".join(parts) if parts.size() > 0 else "empty"
+		inv_label.text = "Items:  %s      (1-5 select · E use · Q drop)" % listing
+
 
 func show_death() -> void:
 	var dp := get_node_or_null("Root/DeathPanel") as Control

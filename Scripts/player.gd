@@ -21,7 +21,14 @@ var _hurt_cd := 0.0
 var _spawn_transform: Transform3D
 var _hud: Node = null
 var _target: Node3D = null      # enemy currently locked for the next swing
-var _keys := {}                 # key ids the player currently holds
+
+# --- Inventory ---
+# Each entry is a dictionary: {id, name, type, count, heal}
+#   type "health" -> usable, restores `heal` HP
+#   type "key"    -> passive, opens the matching locked door
+# The player can select a slot (1-5), use it (E) or drop/remove one (Q).
+var _inventory: Array = []
+var _sel := 0
 
 
 func _ready() -> void:
@@ -51,20 +58,131 @@ func die() -> void:
 		_hud.show_death()
 
 
-# --- Keys ---
+# ---------------------------------------------------------------- Inventory ---
+
+func _pretty_id(id: String) -> String:
+	var words := id.replace("_", " ").split(" ")
+	var out := ""
+	for w in words:
+		if w != "":
+			out += w.substr(0, 1).to_upper() + w.substr(1) + " "
+	return out.strip_edges()
+
+
+# Generic pickup entry point. `count` items of the given id are added, stacking
+# onto an existing slot of the same id.
+func add_item(id: String, item_name := "", type := "misc", count := 1, heal := 0) -> void:
+	if id == "" or count <= 0:
+		return
+	if item_name == "":
+		item_name = _pretty_id(id)
+	for it in _inventory:
+		if it.id == id:
+			it.count += count
+			return
+	_inventory.append({"id": id, "name": item_name, "type": type, "count": count, "heal": heal})
+
+
+func remove_item(id: String, count := 1) -> void:
+	for i in range(_inventory.size()):
+		if _inventory[i].id == id:
+			_inventory[i].count -= count
+			if _inventory[i].count <= 0:
+				_inventory.remove_at(i)
+			_clamp_sel()
+			return
+
+
+func has_item(id: String) -> bool:
+	for it in _inventory:
+		if it.id == id and it.count > 0:
+			return true
+	return false
+
+
+func get_inventory() -> Array:
+	return _inventory
+
+
+func get_selected_index() -> int:
+	return _sel
+
+
+func _clamp_sel() -> void:
+	if _inventory.is_empty():
+		_sel = 0
+	else:
+		_sel = clampi(_sel, 0, _inventory.size() - 1)
+
+
+func _use_index(i: int) -> void:
+	if i < 0 or i >= _inventory.size():
+		return
+	var it: Dictionary = _inventory[i]
+	match it.type:
+		"health":
+			if health < max_health:
+				health = mini(max_health, health + int(it.heal))
+				_consume(i)
+		_:
+			# Keys and misc items aren't consumed by "use" (keys work at doors).
+			pass
+
+
+func _consume(i: int) -> void:
+	_inventory[i].count -= 1
+	if _inventory[i].count <= 0:
+		_inventory.remove_at(i)
+	_clamp_sel()
+
+
+func _use_selected() -> void:
+	_use_index(_sel)
+
+
+# Drop / remove one of the selected item.
+func _drop_selected() -> void:
+	if _sel < 0 or _sel >= _inventory.size():
+		return
+	_consume(_sel)
+
+
+# --------------------------------------------------------------------- Keys ---
+# Keys are just inventory items of type "key"; doors call has_key().
+
 func add_key(id: String) -> void:
 	if id == "":
 		return
-	_keys[id] = true
+	add_item(id, _pretty_id(id), "key", 1)
 
 
 func has_key(id: String) -> bool:
-	return _keys.has(id)
+	return has_item(id)
 
 
 func get_key_ids() -> Array:
-	return _keys.keys()
+	var ids: Array = []
+	for it in _inventory:
+		if it.type == "key" and it.count > 0:
+			ids.append(it.id)
+	return ids
 
+
+# -------------------------------------------------------------------- Input ---
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5:
+				_sel = event.keycode - KEY_1
+				_clamp_sel()
+			KEY_E:
+				_use_selected()
+			KEY_Q:
+				_drop_selected()
+
+
+# ------------------------------------------------------------------- Combat ---
 
 # Pick the nearest enemy inside the swing range and roughly in front, and
 # highlight it so the player can see what they will hit (targeting).
