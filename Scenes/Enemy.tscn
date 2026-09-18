@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1"]
+[ext_resource type="PackedScene" path="res://Scenes/Projectile.tscn" id="2"]
+
+[sub_resource type="CapsuleShape3D" id="col"]
+radius = 0.4
+height = 1.7
+
+[sub_resource type="CapsuleMesh" id="body_mesh"]
+radius = 0.4
+height = 1.7
+
+[sub_resource type="StandardMaterial3D" id="body_mat"]
+albedo_color = Color(0.7, 0.16, 0.13, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="head_mesh"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="head_mat"]
+albedo_color = Color(0.12, 0.09, 0.09, 1)
+roughness = 1.0
+
+[node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1")
+projectile_scene = ExtResource("2")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("col")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+material_override = SubResource("body_mat")
+mesh = SubResource("body_mesh")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+material_override = SubResource("head_mat")
+mesh = SubResource("head_mesh")
