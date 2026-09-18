@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="3D Dungeon Game"
-run/main_scene="uid://c04mccss52wqy"
+run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
