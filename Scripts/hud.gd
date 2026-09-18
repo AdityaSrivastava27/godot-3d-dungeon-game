@@ -1,14 +1,23 @@
 extends CanvasLayer
 
-## Reads the player's health and the live enemy count each frame and updates the
-## on-screen bar/labels. show_death() flashes the death overlay on respawn.
+## Reads the player's health, key ring and the live enemy count each frame and
+## updates the on-screen bar/labels. show_death() flashes the death overlay on
+## respawn; notify_locked() briefly shows a "locked door" hint.
+
+var _lock_timer := 0.0
 
 
-func _process(_delta: float) -> void:
+func notify_locked() -> void:
+	_lock_timer = 0.25
+
+
+func _process(delta: float) -> void:
 	var p := get_tree().get_first_node_in_group("player")
 	var fill := get_node_or_null("Root/HealthBg/HealthFill") as ColorRect
 	var hp_label := get_node_or_null("Root/HPLabel") as Label
 	var enemy_label := get_node_or_null("Root/EnemyLabel") as Label
+	var key_label := get_node_or_null("Root/KeyLabel") as Label
+	var lock_label := get_node_or_null("Root/LockLabel") as Label
 
 	if p != null and fill != null:
 		var mh: float = float(p.max_health) if "max_health" in p else 100.0
@@ -24,6 +33,16 @@ func _process(_delta: float) -> void:
 	if enemy_label != null:
 		var n := get_tree().get_nodes_in_group("enemies").size()
 		enemy_label.text = ("Enemies left: %d" % n) if n > 0 else "Dungeon cleared!"
+
+	if key_label != null:
+		var ids: Array = []
+		if p != null and p.has_method("get_key_ids"):
+			ids = p.get_key_ids()
+		key_label.text = "Keys: %s" % (", ".join(ids) if ids.size() > 0 else "none")
+
+	if lock_label != null:
+		_lock_timer = maxf(0.0, _lock_timer - delta)
+		lock_label.visible = _lock_timer > 0.0
 
 
 func show_death() -> void:

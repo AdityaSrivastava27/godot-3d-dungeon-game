@@ -21,6 +21,7 @@ var _hurt_cd := 0.0
 var _spawn_transform: Transform3D
 var _hud: Node = null
 var _target: Node3D = null      # enemy currently locked for the next swing
+var _keys := {}                 # key ids the player currently holds
 
 
 func _ready() -> void:
@@ -48,6 +49,21 @@ func die() -> void:
 		_hud = get_tree().get_first_node_in_group("hud")
 	if _hud and _hud.has_method("show_death"):
 		_hud.show_death()
+
+
+# --- Keys ---
+func add_key(id: String) -> void:
+	if id == "":
+		return
+	_keys[id] = true
+
+
+func has_key(id: String) -> bool:
+	return _keys.has(id)
+
+
+func get_key_ids() -> Array:
+	return _keys.keys()
 
 
 # Pick the nearest enemy inside the swing range and roughly in front, and

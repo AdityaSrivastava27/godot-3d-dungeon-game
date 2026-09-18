@@ -16,6 +16,8 @@ extends CharacterBody3D
 @export var projectile_speed := 13.0
 @export var projectile_damage := 8
 @export var projectile_scene: PackedScene
+@export var key_id: String = ""            # which key this enemy drops (blank = none)
+@export var key_scene: PackedScene         # the Key.tscn pickup to spawn on death
 
 var health := 0
 var _home := Vector3.ZERO
@@ -51,7 +53,20 @@ func take_damage(amount: int) -> void:
 
 
 func die() -> void:
+	_drop_key()
 	queue_free()
+
+
+# Spawn the key pickup where the enemy fell, so the player only gets it after
+# defeating this enemy.
+func _drop_key() -> void:
+	if key_scene == null or key_id == "":
+		return
+	var key := key_scene.instantiate()
+	get_tree().current_scene.add_child(key)
+	key.global_position = global_position + Vector3(0, 1.0, 0)
+	if "key_id" in key:
+		key.key_id = key_id
 
 
 # True only when nothing solid (physics layer 1) sits between the enemy's throwing
